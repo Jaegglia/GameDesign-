@@ -5,9 +5,9 @@ import time
 
 name=input("What is your name? ")
 print("Good luck! ", name)
-gameWords=['apple', 'pie','banana','coffee', 'donut', 'bagel', 'candy','tortilla', 'pizza', 'burger','hot dog' ]
-
-answer=input('do you want to guess a type of food ')
+gameWords=['python', 'java','PHP','javaScript', 'computer', 'geeks', 'keyboard','laptop', 'headphone', 'hardware','software' ]
+# use the choice method of my random fucntion to pick a gameWords
+answer=input('do you want to guess a word ')
 
 
 
@@ -20,15 +20,12 @@ while answer == 'yes':
             if char in guesses:
                 print(char)
             else:
-                print('_',end='')
+                print('_')
         guess= input("give me a letter: ")
         guesses += guess
         turns-=1
-    
+
 
 
     answer=input('do you want to play again ')
 time.sleep(5)
-
-    
-    
