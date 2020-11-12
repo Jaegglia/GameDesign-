@@ -1,0 +1,13 @@
+y=2
+x=3.0
+a="word"
+b=False
+print(type(x))
+print(type(y))
+print(type(a))
+print(type(b))
+h=x+y
+print(h)
+print(type(h))
+print(x/y)
+print(x-y)

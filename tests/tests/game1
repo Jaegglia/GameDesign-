@@ -1,13 +1,6 @@
 #self made game number 1
 
-import random
-from random import shuffle
-
-
-myfile = open("newFile.txt", "r")
-gamewords = dict()
-
-print(gamewords)
+gamewords={'lemonade','milk','soda','water','juice','koolaid','wine','kombucha','tea'}
 
 def intro():
     print('Welcome to the scramble game\n')
