@@ -1,0 +1,105 @@
+import pygame as pg
+
+
+
+#important variables
+WORD_FONT = pg.font.SysFont('comicsans', 60)
+WIDTH, HEIGHT = 800, 500
+
+#colors
+white=(255,255,255)
+red=(255,0,0)
+green=(0,255,0)
+blue=(0,0,255)
+lightblue=(0,0,200)
+
+def display_message(message):
+    pg.time.delay(1000)
+    text = WORD_FONT.render(message, 1, BLACK)
+    win.blit(text, (WIDTH/2 - text.get_width()/2, HEIGHT/2 - text.get_height()/2))
+    pg.display.update()
+    pg.time.delay(3000)
+
+
+
+#main menu
+def main():
+    screen = pg.display.set_mode((800, 800))
+    clock = pg.time.Clock()
+    input_box = pg.Rect(200, 80, 600, 70)
+    easy_box=(150,300,70,40)
+    hard_box=(800-170,300,70,40)
+
+    color_inactive = blue
+    color_active = lightblue
+    color = color_inactive
+
+    active = True
+    active2=False
+
+    text = ''
+    done = False
+    text_print=font.render(text,1,blue)
+
+
+    RADIUS = 20
+    GAP = 15
+    letters = []
+    FPS = 60
+    clock = pg.time.Clock()
+
+
+
+    while active:
+        clock.tick(FPS)
+
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                active= False
+                if event.type == pg.MOUSEBUTTONDOWN:
+    # If the user clicked on the input_box rect.
+                    if input_box.collidepoint(event.pos):
+        # Toggle the active variable.
+                        active = not active
+                    else:
+                        active = False
+    # Change the current color of the input box.
+                        color = color_active if active else color_inactive
+
+                if event.type == pg.KEYDOWN:
+                    if active:
+                        if event.key == pg.K_RETURN:
+                            text_print
+                            text = ''
+                elif event.type == pg.K_BACKSPACE:
+                    text = text[:-1]
+                else:
+                    text += event.unicode
+
+
+        screen.fill((30, 30, 30))
+        # Render the current text.
+        txt_surface = WORD_FONT.render(text, True, color)
+        # Resize the box if the text is too long.
+        width = max(400, txt_surface.get_width()+10)
+        input_box.w = width
+
+        pg.display.set_caption("The Game")
+        #screen.blit('Easy',1,red)
+
+        screen.blit(txt_surface, (input_box.x+5, input_box.y+5))
+
+        pg.draw.rect(screen, color, input_box, 2)
+        pg.draw.rect(screen,red,easy_box)
+        pg.draw.rect(screen,blue,hard_box)
+
+
+
+        pg.display.flip()
+        clock.tick(30)
+
+
+if __name__ == '__main__':
+    pg.init()
+    main()
+    pg.quit()
