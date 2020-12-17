@@ -1,105 +1,164 @@
-import pygame as pg
+import pygame
+import sys
+import time
+import random
 
 
+#initialize
+init_status = pygame.init()
+if init_status[1] > 0:
+    print("(!) Had {0} initialising errors, exiting... ".format(init_status[1]))
+    sys.exit()
+else:
+    print("(+) Pygame initialised successfully ")
 
-#important variables
-WORD_FONT = pg.font.SysFont('comicsans', 60)
-WIDTH, HEIGHT = 800, 500
+#window
+size = width, height = 800, 800
+playSurface = pygame.display.set_mode(size)
+pygame.display.set_caption("snake")
+
+#helps with frames per second
+fpsController = pygame.time.Clock()
 
 #colors
-white=(255,255,255)
-red=(255,0,0)
-green=(0,255,0)
-blue=(0,0,255)
-lightblue=(0,0,200)
-
-def display_message(message):
-    pg.time.delay(1000)
-    text = WORD_FONT.render(message, 1, BLACK)
-    win.blit(text, (WIDTH/2 - text.get_width()/2, HEIGHT/2 - text.get_height()/2))
-    pg.display.update()
-    pg.time.delay(3000)
+red = pygame.Color(255, 0, 0)
+green = pygame.Color(0, 255, 0)
+black = pygame.Color(0, 0, 0)
+white = pygame.Color(255, 255, 255)
+brown = pygame.Color(165, 42, 42)
 
 
+
+# Game Over
+def gameOver():
+    myFont = pygame.font.SysFont('monaco', 72)
+    GOsurf = myFont.render("Game Over", True, red)
+    GOrect = GOsurf.get_rect()
+    GOrect.midtop = (320, 25)
+    playSurface.blit(GOsurf, GOrect)
+    showScore(0)
+    pygame.display.flip()
+    time.sleep(4)
+    menuvalue=0
+
+def quitgame():
+    pygame.quit()
+    sys.exit()
+
+
+#game settings
+menuvalue=1
+delta = 10
+snakePos = [100, 50]
+snakeBody = [[100, 50], [90, 50], [80, 50]]
+foodPos = [400, 50]
+foodSpawn = True
+direction = 'RIGHT'
+changeto = ''
+score = 0
+
+
+# Show Score
+def showScore(choice=1):
+    SFont = pygame.font.SysFont('monaco', 32)
+    Ssurf = SFont.render("Score  :  {0}".format(score), True, black)
+    Srect = Ssurf.get_rect()
+    if choice == 1:
+        Srect.midtop = (80, 10)
+    else:
+        Srect.midtop = (320, 100)
+    playSurface.blit(Ssurf, Srect)
 
 #main menu
-def main():
-    screen = pg.display.set_mode((800, 800))
-    clock = pg.time.Clock()
-    input_box = pg.Rect(200, 80, 600, 70)
-    easy_box=(150,300,70,40)
-    hard_box=(800-170,300,70,40)
+while True:
+    while menuvalue==1:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_b:
+                    #big
+                    delta=5
+                    menuvalue=0
+                if event.key == pygame.K_s:
+                    #small
+                    delta=10
+                    menuvalue=0
+                if event.key == pygame.K_q:
+                    #quit the game
+                    quitgame()
 
-    color_inactive = blue
-    color_active = lightblue
-    color = color_inactive
-
-    active = True
-    active2=False
-
-    text = ''
-    done = False
-    text_print=font.render(text,1,blue)
-
-
-    RADIUS = 20
-    GAP = 15
-    letters = []
-    FPS = 60
-    clock = pg.time.Clock()
+        playSurface.fill((255,255,255))
+        pygame.image.load("instructions.png")
 
 
+    if menuvalue==0:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
 
-    while active:
-        clock.tick(FPS)
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+                    changeto = 'RIGHT'
+                if event.key == pygame.K_LEFT or event.key == pygame.K_a:
+                    changeto = 'LEFT'
+                if event.key == pygame.K_UP or event.key == pygame.K_w:
+                    changeto = 'UP'
+                if event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                    changeto = 'DOWN'
+                if event.key == pygame.K_ESCAPE:
+                    pygame.event.post(pygame.event.Event(pygame.QUIT))
 
-        for event in pg.event.get():
-            if event.type == pg.QUIT:
-                active= False
-                if event.type == pg.MOUSEBUTTONDOWN:
-    # If the user clicked on the input_box rect.
-                    if input_box.collidepoint(event.pos):
-        # Toggle the active variable.
-                        active = not active
-                    else:
-                        active = False
-    # Change the current color of the input box.
-                        color = color_active if active else color_inactive
+        # direction
+        if changeto == 'RIGHT' and direction != 'LEFT':
+            direction = changeto
+        if changeto == 'LEFT' and direction != 'RIGHT':
+            direction = changeto
+        if changeto == 'UP' and direction != 'DOWN':
+            direction = changeto
+        if changeto == 'DOWN' and direction != 'UP':
+            direction = changeto
 
-                if event.type == pg.KEYDOWN:
-                    if active:
-                        if event.key == pg.K_RETURN:
-                            text_print
-                            text = ''
-                elif event.type == pg.K_BACKSPACE:
-                    text = text[:-1]
-                else:
-                    text += event.unicode
+        # snake position
+        if direction == 'RIGHT':
+            snakePos[0] += delta
+        if direction == 'LEFT':
+            snakePos[0] -= delta
+        if direction == 'DOWN':
+            snakePos[1] += delta
+        if direction == 'UP':
+            snakePos[1] -= delta
+
+        # snake body mechanism
+        snakeBody.insert(0, list(snakePos))
+        if snakePos == foodPos:
+            foodSpawn = False
+            score += 1
+        else:
+            snakeBody.pop()
+        if foodSpawn == False:
+            foodPos = [random.randrange(1, width // 10) * delta, random.randrange(1, height // 10) * delta]
+            foodSpawn = True
+
+        playSurface.fill(white)
+        for pos in snakeBody:
+            pygame.draw.rect(playSurface, green, pygame.Rect(pos[0], pos[1], delta, delta))
+            pygame.draw.rect(playSurface, brown, pygame.Rect(foodPos[0], foodPos[1], delta, delta))
+
+        # snake hits the sides
+        if snakePos[0] >= width or snakePos[0] < 0:
+            gameOver()
+        if snakePos[1] >= height or snakePos[1] < 0:
+            gameOver()
+
+        # snake hits itself
+        for block in snakeBody[1:]:
+            if snakePos == block:
+                gameOver()
 
 
-        screen.fill((30, 30, 30))
-        # Render the current text.
-        txt_surface = WORD_FONT.render(text, True, color)
-        # Resize the box if the text is too long.
-        width = max(400, txt_surface.get_width()+10)
-        input_box.w = width
-
-        pg.display.set_caption("The Game")
-        #screen.blit('Easy',1,red)
-
-        screen.blit(txt_surface, (input_box.x+5, input_box.y+5))
-
-        pg.draw.rect(screen, color, input_box, 2)
-        pg.draw.rect(screen,red,easy_box)
-        pg.draw.rect(screen,blue,hard_box)
-
-
-
-        pg.display.flip()
-        clock.tick(30)
-
-
-if __name__ == '__main__':
-    pg.init()
-    main()
-    pg.quit()
+        showScore()
+        pygame.display.flip()
+        fpsController.tick(20)
