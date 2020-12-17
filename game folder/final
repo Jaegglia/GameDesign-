@@ -56,7 +56,7 @@ foodSpawn = True
 direction = 'RIGHT'
 changeto = ''
 score = 0
-
+gloob=1
 
 # Show Score
 def showScore(choice=1):
@@ -88,9 +88,9 @@ while True:
                 if event.key == pygame.K_q:
                     #quit the game
                     quitgame()
-
-        playSurface.fill((255,255,255))
-        pygame.image.load("instructions.png")
+        if gloob == 1:
+            playSurface.fill((255,255,255))
+            
 
 
     if menuvalue==0:
